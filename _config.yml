@@ -7,6 +7,7 @@ html:
   use_repository_button: true
   home_page_in_navbar: true
   extra_footer: |
+    <p style="font-size:0.9em;opacity:0.85"><strong>⚠️ Work in progress.</strong> These are living draft materials — actively being written and revised. Expect rough edges, gaps, and changes; this is a teaching companion, not a final or official reference.</p>
     <p><em>The BittBridge final project (OPIM 5509). Built from the BittBridge team's
     lecture transcripts (Dmitrii Tuzov, Niharika, Faeze, Ben, Matt) and the open-source
     <a href="https://github.com/bittbridge/bittbridge">bittbridge/bittbridge</a> guide —

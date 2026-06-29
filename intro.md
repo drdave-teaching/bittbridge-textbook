@@ -1,5 +1,10 @@
 # Preface
 
+:::{admonition} ⚠️ Work in progress
+:class: warning
+These materials are a **living draft** — actively being written, revised, and expanded from the team's lecture transcripts and the open-source guide. Expect rough edges, gaps, and changes between visits. This is a teaching companion, **not a final or official reference**. Spot something off? That's expected — it's a work in progress!
+:::
+
 Welcome to the **book edition of the BittBridge final project** — the decentralized-AI capstone for **OPIM 5509** at the University of Connecticut.
 
 Most of this course is about building models that live on *your* machine. This project is different: you are going to take a forecasting model, put it on a virtual machine in the cloud, register it on a **public blockchain**, and let it compete — live, against your classmates and against strangers around the world — to predict the **electricity demand of New England**. When your model is good, it earns rewards. When it's bad, the leaderboard says so, in public, every five minutes. That feedback loop is the whole point.
