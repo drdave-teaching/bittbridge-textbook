@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard &#8212; Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"]]}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ch3_models_leaderboard/index';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor" href="../ch4_custom_colab/index.html" />
+    <link rel="prev" title="Chapter 2 — Setup: Wallet &amp; Base Miner" href="../ch2_setup_miner/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch1_decentralized_ai/index.html">Chapter 1 — What Is Decentralized AI?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch2_setup_miner/index.html">Chapter 2 — Setup: Wallet &amp; Base Miner</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch4_custom_colab/index.html">Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/drdave-teaching/bittbridge-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ch3_models_leaderboard/index.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chapter 3 — Deploying Models: Linux, Config & the Leaderboard</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#just-enough-linux-to-be-dangerous">3.1 Just enough Linux to be dangerous</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-the-latest-code">3.2 Pull the latest code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-configuration-file-is-your-control-panel">3.3 The configuration file is your control panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-a-real-model-linear-regression-cart">3.4 Train a real model: linear regression → CART</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-iteration-loop-without-stopping-the-miner">3.5 The iteration loop (without stopping the miner)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-artifacts-download-what-your-model-did">3.6 Your artifacts: download what your model did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-leaderboard-like-a-pro">3.7 Read the leaderboard like a pro</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chapter-3-deploying-models-linux-config-the-leaderboard">
+<h1>Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard<a class="headerlink" href="#chapter-3-deploying-models-linux-config-the-leaderboard" title="Link to this heading">#</a></h1>
+<div class="seealso dropdown admonition">
+<p class="admonition-title">🎥 The lectures &amp; 📖 the guide behind this chapter</p>
+<p>Videos: <em>Linux Basics</em>, <em>Codebase Update</em>, <em>Config + Linear Regression + CART</em>, <em>How to Make Changes &amp; Redeploy</em>, <em>Download actuals-vs-predicted</em>, <em>Leaderboard Use</em>.</p>
+<p>Guide pages:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/05-update-and-restart.md"><code class="docutils literal notranslate"><span class="pre">05-update-and-restart.md</span></code></a></p></li>
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/06-advanced-miner-models.md"><code class="docutils literal notranslate"><span class="pre">06-advanced-miner-models.md</span></code></a></p></li>
+</ul>
+<p>Example models notebook   <a class="reference external" href="https://colab.research.google.com/github/bittbridge/bittbridge/blob/main/miner_model_energy/ExampleMinerModels_UPDATED_with_load_lags.ipynb"><img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a>   <a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/miner_model_energy/ExampleMinerModels_UPDATED_with_load_lags.ipynb">GitHub</a></p>
+</div>
+<p>Your base miner runs a moving average — fine for a first deploy, hopeless on the leaderboard. This chapter is where you become competitive: a little more Linux, a code update, and then the loop that actually wins — <strong>edit the config, train a real model, redeploy, read the leaderboard, repeat.</strong></p>
+<section id="just-enough-linux-to-be-dangerous">
+<h2>3.1 Just enough Linux to be dangerous<a class="headerlink" href="#just-enough-linux-to-be-dangerous" title="Link to this heading">#</a></h2>
+<p>You navigate the VM with a handful of commands. Run them, don’t memorize them — muscle memory comes fast:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>What it does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pwd</span></code></p></td>
+<td><p><strong>print working directory</strong> — where am I right now?</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ls</span></code></p></td>
+<td><p><strong>list</strong> the files/folders in the current directory</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">&lt;folder&gt;</span></code> / <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code></p></td>
+<td><p><strong>change directory</strong> into a folder / up one level</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nano</span> <span class="pre">&lt;file&gt;</span></code></p></td>
+<td><p>open the basic text editor (save <strong>Ctrl+O</strong>, exit <strong>Ctrl+X</strong>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">↑</span></code> / <code class="docutils literal notranslate"><span class="pre">Ctrl+R</span></code></p></td>
+<td><p>recall the previous command / <strong>search</strong> your command history</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>One more <code class="docutils literal notranslate"><span class="pre">tmux</span></code> trick you’ll want: to <strong>scroll</strong> inside a running session (which normally won’t scroll), press <strong>Ctrl+B</strong> then <strong><code class="docutils literal notranslate"><span class="pre">[</span></code></strong> to enter navigation mode (yellow numbers appear top-right), scroll with the mouse or arrows, and press <strong><code class="docutils literal notranslate"><span class="pre">q</span></code></strong> to exit. This is how you read your miner’s logs without stopping it.</p>
+</section>
+<section id="pull-the-latest-code">
+<h2>3.2 Pull the latest code<a class="headerlink" href="#pull-the-latest-code" title="Link to this heading">#</a></h2>
+<p>The team ships improvements to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch, so before serious work, update (<code class="docutils literal notranslate"><span class="pre">docs/guide/05-update-and-restart.md</span></code>). Stop the miner first, then pull:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tmux<span class="w"> </span>attach<span class="w"> </span>-t<span class="w"> </span>miner<span class="w">    </span><span class="c1"># back into the session</span>
+<span class="c1"># Ctrl+C  -&gt; stops the miner</span>
+<span class="c1"># Ctrl+B, D -&gt; detach</span>
+git<span class="w"> </span>pull<span class="w">                </span><span class="c1"># fetch the latest code</span>
+</pre></div>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">If git refuses to pull</p>
+<p>If you see <em>“please commit your changes or stash them before you merge,”</em> your local edits are in the way. The guide’s blunt fix is to throw them away and take the remote version:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git reset --hard
+git pull
+</pre></div>
+</div>
+<p>Then re-activate the venv (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">venv/bin/activate</span></code>) and <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> to pick up any new dependencies.</p>
+</div>
+</section>
+<section id="the-configuration-file-is-your-control-panel">
+<h2>3.3 The configuration file is your control panel<a class="headerlink" href="#the-configuration-file-is-your-control-panel" title="Link to this heading">#</a></h2>
+<p>Everything about <em>which</em> model you train and <em>which</em> features it sees lives in one file — the model-params config (<code class="docutils literal notranslate"><span class="pre">nano</span> <span class="pre">model_params.yaml</span></code>). It’s heavily commented; read it. Two kinds of settings:</p>
+<ul class="simple">
+<li><p><strong>Feature toggles</strong> — booleans (<code class="docutils literal notranslate"><span class="pre">true</span></code>/<code class="docutils literal notranslate"><span class="pre">false</span></code>) that turn features on for the training <strong>and</strong> test datasets: time features, temperature, relative humidity, and so on.</p></li>
+<li><p><strong>Model hyperparameters</strong> — e.g., the <strong>max depth</strong> of decision-tree models, leaf size, or the parameters of LSTM/RNN models.</p></li>
+</ul>
+<div class="tip admonition">
+<p class="admonition-title">Key idea — change the config, not the engine</p>
+<p>You compete by editing <strong>features and hyperparameters</strong> in this one file (and later, in Chapter 4, by shipping your own model). Leave the training/validation split and the internal plumbing at their defaults unless the guide tells you otherwise. Track every change like a scientist — “experiment 1: time features only” — so you can attribute improvements.</p>
+</div>
+</section>
+<section id="train-a-real-model-linear-regression-cart">
+<h2>3.4 Train a real model: linear regression → CART<a class="headerlink" href="#train-a-real-model-linear-regression-cart" title="Link to this heading">#</a></h2>
+<p>With the config set, run the miner and it will offer you choices. Decline the baseline moving-average model, update the training dataset when prompted (the first fetch takes a few minutes), and pick a model to train. Start with <strong>linear regression</strong>.</p>
+<p>Scroll the logs (Ctrl+B, <code class="docutils literal notranslate"><span class="pre">[</span></code>) and you’ll see the dataset <strong>shape</strong>, the training time, and <strong>metrics on the training and validation sets</strong>, plus an actual-vs-predicted plot for each. Linear regression on this problem is usually weak, so when it asks whether to deploy, say <strong>no</strong> and train the <strong>CART</strong> model (a regression decision tree) instead.</p>
+<div class="note admonition">
+<p class="admonition-title">Reading the metrics</p>
+<p>The number to watch is <strong>validation <span class="math notranslate nohighlight">\(R^2\)</span></strong> — the fraction of variance your model explains on <em>held-out</em> data. A value above 0 already beats a random guess; CART typically lands well above linear regression here, because energy demand is full of nonlinear, threshold-like behavior (heaters kick on below a temperature, etc.) that a straight line can’t capture. Always trust the <strong>validation</strong> figure over the training figure — a model can ace the training set and still be useless live.</p>
+</div>
+<p>When CART’s metrics look better, deploy it: quit navigation mode (<code class="docutils literal notranslate"><span class="pre">q</span></code>), answer <strong>yes</strong>, and the miner redeploys <em>on the fly</em>. Within ~5 minutes a success log confirms the CART model deployed; within ~10 it’s making live predictions.</p>
+</section>
+<section id="the-iteration-loop-without-stopping-the-miner">
+<h2>3.5 The iteration loop (without stopping the miner)<a class="headerlink" href="#the-iteration-loop-without-stopping-the-miner" title="Link to this heading">#</a></h2>
+<p>Here’s the move that makes you fast: you can keep your miner running, <strong>detach</strong> (Ctrl+B, D), and experiment in a second shell. Edit the config — say, add <strong>humidity</strong> and bump CART’s <strong>depth</strong> from 6 to 7 — and do a <em>dry</em> training run to see the metrics <strong>without deploying</strong>. Compare against your last experiment. A small, well-chosen change (temperature + humidity + a touch more depth) can move your validation <span class="math notranslate nohighlight">\(R^2\)</span> noticeably. When a configuration wins, reattach to the tmux session and redeploy it.</p>
+<div class="important admonition">
+<p class="admonition-title">The competitive loop</p>
+<p><strong>edit config → dry-run train → compare metrics → if better, redeploy → watch leaderboard → repeat.</strong> This is real MLOps: you are the data scientist <em>and</em> the engineer, shipping models into a live system and reading production feedback. That feedback loop — not any single model — is the skill this project teaches.</p>
+</div>
+</section>
+<section id="your-artifacts-download-what-your-model-did">
+<h2>3.6 Your artifacts: download what your model did<a class="headerlink" href="#your-artifacts-download-what-your-model-did" title="Link to this heading">#</a></h2>
+<p>Every run writes an <strong>artifacts</strong> folder (<code class="docutils literal notranslate"><span class="pre">docs/guide/06-advanced-miner-models.md</span></code>). Inside each run you’ll find five files worth knowing:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>What it holds</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">model_*.joblib</span></code></p></td>
+<td><p>the <strong>dumped model weights</strong> — download and run locally</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code></p></td>
+<td><p>the run’s metrics</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">actual_vs_predicted.csv</span></code></p></td>
+<td><p>predictions vs. ground truth (great for your own plots)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">config_snapshot.yaml</span></code></p></td>
+<td><p>the exact config you used</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">manifest.json</span></code></p></td>
+<td><p>data shape + training-data timestamp</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To pull one to your laptop, get its path with <code class="docutils literal notranslate"><span class="pre">realpath</span> <span class="pre">actual_vs_predicted.csv</span></code>, then use the Cloud Shell <strong>download file</strong> option with that path. (If a download stalls, refresh the SSH window and retry — a known quirk.)</p>
+</section>
+<section id="read-the-leaderboard-like-a-pro">
+<h2>3.7 Read the leaderboard like a pro<a class="headerlink" href="#read-the-leaderboard-like-a-pro" title="Link to this heading">#</a></h2>
+<p>The public website has <strong>three</strong> leaderboards, and knowing which to trust is itself a skill:</p>
+<ol class="arabic simple">
+<li><p><strong>Latest prediction</strong> — updates every cycle; shows who was closest to ground truth <em>right now</em>. Exciting, but noisy: a near-random model can nail one timestamp by luck.</p></li>
+<li><p><strong>24-hour average (cumulative reward)</strong> — the one that matters. It rewards models that are <em>consistently</em> close over a full day, which is what the incentive mechanism actually pays for.</p></li>
+<li><p><strong>Time-series plot</strong> — overlays each miner’s predictions on the real demand curve. Filter to 24 hours and you can <em>see</em> model behavior: a moving-average miner lags and smooths over the spikes; a CART miner makes the characteristic stair-step of a decision tree; a good model tracks the real ups and downs, including the demand spike on a cold, rainy day when everyone turns on the heat.</p></li>
+</ol>
+<div class="tip admonition">
+<p class="admonition-title">Key idea — optimize for the 24-hour board</p>
+<p>A single lucky prediction is meaningless; <strong>cumulative accuracy over time</strong> is what earns emissions. When you compare your miner to a classmate’s (filter by UID), compare them on the 24-hour view. And give a freshly restarted miner up to ~30 minutes to appear on the board.</p>
+</div>
+<p>By the end of this chapter your CART miner is live, you can iterate on it in minutes, and you can read the leaderboard honestly. In Chapter 4 we blow the doors off the config file and let you ship <strong>any model you can dream up</strong>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ch3_models_leaderboard"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch2_setup_miner/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 2 — Setup: Wallet &amp; Base Miner</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch4_custom_colab/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#just-enough-linux-to-be-dangerous">3.1 Just enough Linux to be dangerous</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-the-latest-code">3.2 Pull the latest code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-configuration-file-is-your-control-panel">3.3 The configuration file is your control panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-a-real-model-linear-regression-cart">3.4 Train a real model: linear regression → CART</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-iteration-loop-without-stopping-the-miner">3.5 The iteration loop (without stopping the miner)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-artifacts-download-what-your-model-did">3.6 Your artifacts: download what your model did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-leaderboard-like-a-pro">3.7 Read the leaderboard like a pro</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dr. Dave Wanik & the BittBridge team · University of Connecticut (OPIM 5509)
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <p style="font-size:0.9em;opacity:0.85"><strong>⚠️ Work in progress.</strong> These are living draft materials — actively being written and revised. Expect rough edges, gaps, and changes; this is a teaching companion, not a final or official reference.</p>
+<p><em>The BittBridge final project (OPIM 5509). Built from the BittBridge team's
+lecture transcripts (Dmitrii Tuzov, Niharika, Faeze, Ben, Matt) and the open-source
+<a href="https://github.com/bittbridge/bittbridge">bittbridge/bittbridge</a> guide —
+a casual-but-rigorous, do-it-yourself walk through decentralized AI on Bittensor Subnet 183.</em></p>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

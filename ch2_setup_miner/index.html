@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Chapter 2 — Setup: Wallet &amp; Base Miner &#8212; Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"]]}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ch2_setup_miner/index';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard" href="../ch3_models_leaderboard/index.html" />
+    <link rel="prev" title="Chapter 1 — What Is Decentralized AI?" href="../ch1_decentralized_ai/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch1_decentralized_ai/index.html">Chapter 1 — What Is Decentralized AI?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 2 — Setup: Wallet &amp; Base Miner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch3_models_leaderboard/index.html">Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch4_custom_colab/index.html">Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/drdave-teaching/bittbridge-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ch2_setup_miner/index.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chapter 2 — Setup: Wallet & Base Miner</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-30-second-picture">2.1 The 30-second picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stand-up-the-cloud-vm">2.2 Stand up the cloud VM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-python-environment">2.3 Build the Python environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-wallet-and-get-tokens">2.4 Create a wallet and get tokens</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wire-up-the-data-credentials">2.5 Wire up the data credentials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-miner-and-keep-it-alive-with-tmux">2.6 Run the miner (and keep it alive with tmux)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chapter-2-setup-wallet-base-miner">
+<h1>Chapter 2 — Setup: Wallet &amp; Base Miner<a class="headerlink" href="#chapter-2-setup-wallet-base-miner" title="Link to this heading">#</a></h1>
+<div class="seealso dropdown admonition">
+<p class="admonition-title">🎥 The lectures &amp; 📖 the guide behind this chapter</p>
+<p>Videos: <em>Miner #1 Intro</em>, <em>#2 Before You Start</em>, <em>#3.1–3.2 GCP VM Setup</em>, <em>#4.1–4.2 Wallets &amp; Tokens</em>, <em>#5 Miner Deployment</em>.</p>
+<p>Follow along in the official guide — this chapter is the narrated version of these pages:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/01-before-you-start.md"><code class="docutils literal notranslate"><span class="pre">01-before-you-start.md</span></code></a></p></li>
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/02-gcp-vm-setup.md"><code class="docutils literal notranslate"><span class="pre">02-gcp-vm-setup.md</span></code></a></p></li>
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/03-wallets-and-tokens.md"><code class="docutils literal notranslate"><span class="pre">03-wallets-and-tokens.md</span></code></a></p></li>
+<li><p><a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/04-run-miner.md"><code class="docutils literal notranslate"><span class="pre">04-run-miner.md</span></code></a></p></li>
+</ul>
+</div>
+<p>Everything starts at one place: the public GitHub repository <strong><a class="reference external" href="https://github.com/bittbridge/bittbridge"><code class="docutils literal notranslate"><span class="pre">bittbridge/bittbridge</span></code></a></strong> — the code <em>and</em> the documentation. Open it now. The README has a high-level workflow and a <strong>checklist</strong>; use the checklist religiously, so that when something breaks you know exactly which step to inspect. You’ll work almost entirely on the <strong>miner</strong> side, because the validators are already deployed and maintained by the team.</p>
+<div class="important admonition">
+<p class="admonition-title">Before you start — two prerequisites</p>
+<ol class="arabic simple">
+<li><p>A <strong>GitHub</strong> account and a basic idea of what a repository is.</p></li>
+<li><p>A <strong>Google Cloud Platform</strong> account with the <strong>$300 free-trial</strong> activated.</p></li>
+</ol>
+<p>Two vocabulary words you’ll need (<code class="docutils literal notranslate"><span class="pre">docs/guide/01-before-you-start.md</span></code>):</p>
+<ul class="simple">
+<li><p><strong>Virtual machine (VM):</strong> a <em>remote computer</em> hosted on Google Cloud that runs 24/7 whether or not your laptop is on. Think “a PC in the cloud.”</p></li>
+<li><p><strong>Virtual environment (venv):</strong> an isolated folder inside your project that holds <em>just this project’s</em> Python libraries, separate from your laptop’s global Python.</p></li>
+</ul>
+</div>
+<section id="the-30-second-picture">
+<h2>2.1 The 30-second picture<a class="headerlink" href="#the-30-second-picture" title="Link to this heading">#</a></h2>
+<p>A validator asks your miner, <em>“what will demand be in the next few minutes?”</em> Your miner runs a model, returns a number, and the validator later grades it against the real value and writes the reward to the Bittensor blockchain. Your job in this chapter is to get a <strong>base miner</strong> — a simple moving-average model — running in the cloud and registered on the subnet. Four moves: <strong>VM → environment → wallet → run.</strong></p>
+</section>
+<section id="stand-up-the-cloud-vm">
+<h2>2.2 Stand up the cloud VM<a class="headerlink" href="#stand-up-the-cloud-vm" title="Link to this heading">#</a></h2>
+<p>In the Google Cloud console (<code class="docutils literal notranslate"><span class="pre">docs/guide/02-gcp-vm-setup.md</span></code>):</p>
+<ol class="arabic simple">
+<li><p><strong>Firewall rule first.</strong> Decentralization means miners and validators are separate machines around the world that must talk to each other, so you open a port. Create a rule — name it <code class="docutils literal notranslate"><span class="pre">allow-tcp-8091</span></code>, direction <strong>ingress</strong>, action <strong>allow</strong>, targets <strong>all instances</strong>, protocol <strong>TCP</strong>, port <strong>8091</strong>.</p></li>
+<li><p><strong>Create the VM instance.</strong> Change the boot disk to <strong>Ubuntu 22.04 LTS (x86/64)</strong>, bump the disk to <strong>25 GB</strong>, leave the rest default, and create it. Linux is the default here because it’s light, fast, and what essentially every project runs on.</p></li>
+<li><p><strong>Connect.</strong> Click <strong>SSH</strong> and a terminal opens — you now have a real computer on Google’s servers.</p></li>
+</ol>
+<div class="warning admonition">
+<p class="admonition-title">💸 Don’t forget to switch it off</p>
+<p>The VM costs roughly **<span class="math notranslate nohighlight">\(25–26/month**. Your \)</span>300 trial will evaporate faster than you expect if you leave it running idle. Stop the instance when you’re not using it.</p>
+</div>
+</section>
+<section id="build-the-python-environment">
+<h2>2.3 Build the Python environment<a class="headerlink" href="#build-the-python-environment" title="Link to this heading">#</a></h2>
+<p>In the SSH terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># update the OS packages (like a macOS/Windows update)</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y
+
+mkdir<span class="w"> </span>bittbridge_project<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>bittbridge_project
+git<span class="w"> </span>clone<span class="w"> </span>&lt;repo-url&gt;<span class="w">        </span><span class="c1"># clone bittbridge/bittbridge</span>
+<span class="nb">cd</span><span class="w"> </span>bittbridge
+ls<span class="w">                          </span><span class="c1"># see the project structure: bittbridge/, docs/, neurons/, scripts/, ...</span>
+</pre></div>
+</div>
+<p>Now create and activate the <strong>virtual environment</strong> — when your prompt shows <code class="docutils literal notranslate"><span class="pre">(venv)</span></code>, it’s active — then install the dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">    </span><span class="c1"># prompt now shows (venv)</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>Verify Bittensor installed (you’re looking for a <code class="docutils literal notranslate"><span class="pre">bittensor</span> <span class="pre">4.x</span></code>). Two tiny but vital Linux habits introduced here: <code class="docutils literal notranslate"><span class="pre">ls</span></code> lists a folder’s contents, and <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">&lt;folder&gt;</span></code> moves into it (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code> moves up one level). You’ll lean on these constantly in Chapter 3.</p>
+</section>
+<section id="create-a-wallet-and-get-tokens">
+<h2>2.4 Create a wallet and get tokens<a class="headerlink" href="#create-a-wallet-and-get-tokens" title="Link to this heading">#</a></h2>
+<p>Now you touch the blockchain (<code class="docutils literal notranslate"><span class="pre">docs/guide/03-wallets-and-tokens.md</span></code>). Create a wallet for your miner with the <code class="docutils literal notranslate"><span class="pre">btcli</span></code> tool; name the wallet <code class="docutils literal notranslate"><span class="pre">miner</span></code>, accept the default hotkey, and set a password you will remember.</p>
+<div class="danger admonition">
+<p class="admonition-title">🔑 Save your mnemonic — there is no “reset password”</p>
+<p>Creating a wallet prints a <strong>mnemonic phrase</strong> (the seed words) and your <strong>coldkey/hotkey addresses</strong>. Store them somewhere safe <em>immediately</em>. This phrase is the <strong>only</strong> way to restore the wallet — lose it and the wallet is gone for good.</p>
+</div>
+<p>List your wallet and copy the <strong>coldkey address</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>btcli<span class="w"> </span>wallet<span class="w"> </span>list
+</pre></div>
+</div>
+<p>You need <strong>testnet TAO</strong> to participate. The faucet here is the instructor: send your coldkey address (following the in-class instructions) and tokens get transferred to you. Confirm with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>btcli<span class="w"> </span>wallet<span class="w"> </span>balance<span class="w"> </span>--wallet.name<span class="w"> </span>miner
+</pre></div>
+</div>
+<p>Then <strong>register</strong> the wallet on the subnet — this announces to subnet 183 that a new miner wants to participate:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>btcli<span class="w"> </span>subnet<span class="w"> </span>register<span class="w">     </span><span class="c1"># confirm &#39;y&#39;, enter your password</span>
+</pre></div>
+</div>
+<p>When it finishes, the logs show your wallet registered on <strong>netuid 183</strong> with a unique <strong>UID</strong> (e.g., UID 12). <strong>Save that UID</strong> next to your mnemonic — it’s how the leaderboard and validators identify you.</p>
+</section>
+<section id="wire-up-the-data-credentials">
+<h2>2.5 Wire up the data credentials<a class="headerlink" href="#wire-up-the-data-credentials" title="Link to this heading">#</a></h2>
+<p>Your miner pulls real energy data from <strong>ISO New England</strong>, so create an account there and store the credentials in the project (<code class="docutils literal notranslate"><span class="pre">docs/guide/04-run-miner.md</span></code>). The repo ships a template, <code class="docutils literal notranslate"><span class="pre">.env.example</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nano<span class="w"> </span>.env.example<span class="w">     </span><span class="c1"># paste your ISO-NE email + password</span>
+<span class="c1"># Ctrl+O, Enter to save; Ctrl+X to exit</span>
+mv<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">  </span><span class="c1"># rename so the app actually reads it</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-miner-and-keep-it-alive-with-tmux">
+<h2>2.6 Run the miner (and keep it alive with tmux)<a class="headerlink" href="#run-the-miner-and-keep-it-alive-with-tmux" title="Link to this heading">#</a></h2>
+<p>The final move is to run the miner — but a script started normally dies the moment you close the SSH window. The fix is <strong><code class="docutils literal notranslate"><span class="pre">tmux</span></code></strong>, a tool that runs your script in a background session that survives disconnects.</p>
+<div class="tip admonition">
+<p class="admonition-title">Mental model — tmux is a container for your script</p>
+<p>Start your miner inside a <code class="docutils literal notranslate"><span class="pre">tmux</span></code> session and it keeps running on the VM even after you close your laptop — as long as the VM is on. You <strong>detach</strong> (leave it running) with <strong>Ctrl+B</strong>, then <strong>D</strong>, and <strong>reattach</strong> later with <code class="docutils literal notranslate"><span class="pre">tmux</span> <span class="pre">attach</span></code>. List sessions with <code class="docutils literal notranslate"><span class="pre">tmux</span> <span class="pre">ls</span></code>.</p>
+</div>
+<p>Inside a tmux session, activate the venv and launch the miner. The base model is a simple <strong>moving average</strong>; you can tune how far back it looks (e.g., editing the lookback in <code class="docutils literal notranslate"><span class="pre">neurons/miner.py</span></code> from 12 to 24 five-minute steps = the last two hours). Run it from the <strong><code class="docutils literal notranslate"><span class="pre">bittbridge</span></code> directory</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tmux<span class="w"> </span>new<span class="w"> </span>-s<span class="w"> </span>miner
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+python<span class="w"> </span>neurons/miner.py<span class="w">        </span><span class="c1"># (use the exact command from the guide)</span>
+</pre></div>
+</div>
+<p>You’ll see an <strong>Axon</strong> (the miner’s server) come up on an IP and port, and <code class="docutils literal notranslate"><span class="pre">miner</span> <span class="pre">running</span></code> — deployed onto <strong>subnet 183</strong>. Detach with <strong>Ctrl+B, D</strong> and walk away. Within five to ten minutes you’ll see <strong>success logs</strong>: a validator asked for a prediction, and your miner, using the moving average of the most recent energy data, answered with a demand forecast for the next five minutes.</p>
+<div class="note admonition">
+<p class="admonition-title">✅ You did a lot</p>
+<p>In this one assignment you used the <strong>Google Cloud Platform</strong>, the <strong>Linux terminal</strong>, a <strong>Bittensor wallet</strong> and the <strong>blockchain</strong>, a <strong>predictive model</strong>, and <strong>tmux</strong> to keep it alive in production. You can now honestly say you deployed a prediction model onto a decentralized-AI network. Next chapter: make that model <em>good</em>.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ch2_setup_miner"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch1_decentralized_ai/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 1 — What Is Decentralized AI?</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch3_models_leaderboard/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-30-second-picture">2.1 The 30-second picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stand-up-the-cloud-vm">2.2 Stand up the cloud VM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-python-environment">2.3 Build the Python environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-wallet-and-get-tokens">2.4 Create a wallet and get tokens</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wire-up-the-data-credentials">2.5 Wire up the data credentials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-miner-and-keep-it-alive-with-tmux">2.6 Run the miner (and keep it alive with tmux)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dr. Dave Wanik & the BittBridge team · University of Connecticut (OPIM 5509)
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <p style="font-size:0.9em;opacity:0.85"><strong>⚠️ Work in progress.</strong> These are living draft materials — actively being written and revised. Expect rough edges, gaps, and changes; this is a teaching companion, not a final or official reference.</p>
+<p><em>The BittBridge final project (OPIM 5509). Built from the BittBridge team's
+lecture transcripts (Dmitrii Tuzov, Niharika, Faeze, Ben, Matt) and the open-source
+<a href="https://github.com/bittbridge/bittbridge">bittbridge/bittbridge</a> guide —
+a casual-but-rigorous, do-it-yourself walk through decentralized AI on Bittensor Subnet 183.</em></p>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

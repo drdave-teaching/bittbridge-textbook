@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor &#8212; Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"]]}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ch4_custom_colab/index';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard" href="../ch3_models_leaderboard/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch1_decentralized_ai/index.html">Chapter 1 — What Is Decentralized AI?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch2_setup_miner/index.html">Chapter 2 — Setup: Wallet &amp; Base Miner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch3_models_leaderboard/index.html">Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/drdave-teaching/bittbridge-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ch4_custom_colab/index.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-a-training-bundle-from-the-vm">4.1 Export a training bundle from the VM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-your-model-in-colab">4.2 Train your model in Colab</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-the-weights-the-way-the-runtime-expects">4.3 Save the weights the way the runtime expects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ship-it-to-the-miner">4.4 Ship it to the miner</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-your-custom-model-in-production">4.5 Run your custom model in production</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">4.6 Where to go next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chapter-4-advanced-train-in-colab-deploy-on-bittensor">
+<h1>Chapter 4 — Advanced: Train in Colab, Deploy on Bittensor<a class="headerlink" href="#chapter-4-advanced-train-in-colab-deploy-on-bittensor" title="Link to this heading">#</a></h1>
+<div class="seealso dropdown admonition">
+<p class="admonition-title">🎥 The lecture &amp; 📖 the guide behind this chapter</p>
+<p>Video: <em>Advanced Models with Colab — Custom-model live demo</em>.</p>
+<p>Guide page: <a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/docs/guide/07-custom-models.md"><code class="docutils literal notranslate"><span class="pre">07-custom-models.md</span></code></a></p>
+<p>Custom-model notebook   <a class="reference external" href="https://colab.research.google.com/github/bittbridge/bittbridge/blob/main/miner_model_energy/ExampleMinerModels_UPDATED_with_load_lags.ipynb"><img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a>   <a class="reference external" href="https://github.com/bittbridge/bittbridge/blob/main/miner_model_energy/ExampleMinerModels_UPDATED_with_load_lags.ipynb">GitHub</a></p>
+</div>
+<p>In Chapter 3 you competed by toggling features and tuning a built-in CART. Now we remove the ceiling. The <strong>custom-model plugin architecture</strong> lets you train <strong>any regressor you can write</strong> — gradient boosting, an LSTM, a stacked ensemble, whatever — in <strong>Google Colab</strong>, then ship its trained weights to your miner in production. This is the part where your data-science skills, not the config file, decide your rank.</p>
+<div class="important admonition">
+<p class="admonition-title">The big idea — separate training from serving</p>
+<p>Your miner doesn’t train in production; it <strong>serves</strong> a saved model. So the workflow is: export a <strong>training bundle</strong> from the VM → <strong>train anywhere</strong> (Colab, with a GPU/TPU if you like) → save the <strong>weights</strong> → copy them back to the VM → tell the miner to serve them. The plugin architecture is just a clean contract between “where you train” and “where you serve.”</p>
+</div>
+<section id="export-a-training-bundle-from-the-vm">
+<h2>4.1 Export a training bundle from the VM<a class="headerlink" href="#export-a-training-bundle-from-the-vm" title="Link to this heading">#</a></h2>
+<p>Start as before — update and restart (<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">reset</span> <span class="pre">--hard</span> <span class="pre">&amp;&amp;</span> <span class="pre">git</span> <span class="pre">pull</span></code>, reinstall deps), pick your features in the config (say temperature, humidity, and a 2-hour lag), and run the miner. This time choose the option to <strong>create a new custom-model folder</strong>, naming it e.g. <code class="docutils literal notranslate"><span class="pre">custom_test</span></code>. Behind the scenes the miner creates <code class="docutils literal notranslate"><span class="pre">artifacts/custom_test/</span></code> containing <strong>your training dataset</strong>, <strong>metadata</strong> (JSON), and a <strong>template Colab notebook</strong>.</p>
+<p>Zip that folder and download it to your laptop:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>artifacts
+zip<span class="w"> </span>-r<span class="w"> </span>custom_test.zip<span class="w"> </span>custom_test
+realpath<span class="w"> </span>custom_test.zip<span class="w">      </span><span class="c1"># copy this path, then use &quot;download file&quot;</span>
+</pre></div>
+</div>
+<p>(If the download won’t start, refresh the SSH window and retry — same quirk as Chapter 3.)</p>
+</section>
+<section id="train-your-model-in-colab">
+<h2>4.2 Train your model in Colab<a class="headerlink" href="#train-your-model-in-colab" title="Link to this heading">#</a></h2>
+<p>Open <a class="reference external" href="https://colab.research.google.com">Colab</a> and upload the <strong>template notebook</strong> from the bundle (think of it as exactly that — a template). Set the runtime to <strong>TPU/GPU</strong> if you want, restart the session, and upload your <strong>training dataset</strong> into a <code class="docutils literal notranslate"><span class="pre">custom/</span></code> folder in the Colab file pane. Run the first cells to load the data — you’ll see your chosen features (temperature, humidity, time, lag) all present.</p>
+<div class="warning admonition">
+<p class="admonition-title">Two hard rules</p>
+<ol class="arabic simple">
+<li><p><strong>Don’t edit features inside Colab.</strong> All feature engineering — adding, dropping, renaming — happens back on the VM via the config file. Colab is for <em>modeling only</em>, on the features you already chose.</p></li>
+<li><p><strong>Your model must be a regressor.</strong> The task is point forecasting of a continuous load value. The template’s gradient-boosting and neural-net cells are just examples — replace them with anything (LSTM, RNN, XGBoost, a ridge regression), as long as it’s a regressor.</p></li>
+</ol>
+</div>
+<p>Now write <em>your</em> model. The template ships example architectures, but you’re meant to swap in your own. Critically, <strong>add evaluation metrics and a couple of visuals</strong> in the notebook — this is how you’ll know whether the model is production-worthy <em>before</em> you deploy it. (In the live demo, a quick ridge regression scored an <span class="math notranslate nohighlight">\(R^2 \approx 0.3\)</span> — better than a random guess, but a more carefully built custom model reached <span class="math notranslate nohighlight">\(R^2 \approx 0.8\)</span>–<span class="math notranslate nohighlight">\(0.9\)</span>. The gap between those two is your job.)</p>
+</section>
+<section id="save-the-weights-the-way-the-runtime-expects">
+<h2>4.3 Save the weights the way the runtime expects<a class="headerlink" href="#save-the-weights-the-way-the-runtime-expects" title="Link to this heading">#</a></h2>
+<p>The serving side needs the trained <strong>weights</strong> in a known format:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model family</p></th>
+<th class="head"><p>Save with</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scikit-learn (linear, ridge, trees, boosting…)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">joblib.dump(model,</span> <span class="pre">&quot;model_custom.joblib&quot;)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>neural nets</p></td>
+<td><p>TensorFlow/Keras <code class="docutils literal notranslate"><span class="pre">model.save(...)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Saving produces a weights file (e.g. <code class="docutils literal notranslate"><span class="pre">model_custom.joblib</span></code>). Download it from Colab to your laptop’s Downloads folder.</p>
+</section>
+<section id="ship-it-to-the-miner">
+<h2>4.4 Ship it to the miner<a class="headerlink" href="#ship-it-to-the-miner" title="Link to this heading">#</a></h2>
+<p>Back on the VM, upload the weights file (Cloud Shell <strong>Upload file</strong>). It lands in your <strong>home directory</strong>, so move it into the model’s artifacts folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~<span class="w">                       </span><span class="c1"># the upload lands here</span>
+mv<span class="w"> </span>model_custom.joblib<span class="w"> </span>bittbridge/artifacts/custom_test/
+<span class="c1"># verify:</span>
+<span class="nb">cd</span><span class="w"> </span>bittbridge/artifacts/custom_test<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w">   </span><span class="c1"># model_custom.joblib should be here</span>
+</pre></div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">tmux is a container that picks up your changes</p>
+<p>You don’t have to stop the miner to swap models. Make all your changes externally, then <strong>Ctrl+C</strong> the running miner inside its tmux session — when it restarts, the tmux “container” picks up the new files. Detach/scroll exactly as in Chapter 3.</p>
+</div>
+</section>
+<section id="run-your-custom-model-in-production">
+<h2>4.5 Run your custom model in production<a class="headerlink" href="#run-your-custom-model-in-production" title="Link to this heading">#</a></h2>
+<p>From the <code class="docutils literal notranslate"><span class="pre">bittbridge</span></code> directory, run the miner and choose the custom-model option. Decline to update data or create a new folder, and enter your folder name — <code class="docutils literal notranslate"><span class="pre">custom_test</span></code>. The runtime <strong>identifies your model</strong> in that folder and asks whether to deploy. (If the folder held several models, you’d choose which to serve here.) Confirm, and watch for the <strong>success log</strong>: your custom model is deployed.</p>
+<p>A few minutes later you’ll see it making <strong>live predictions</strong>. The logs even show the <strong>model input row</strong> — a JSON record of the exact weather-forecast features your model used for that prediction; copy it into a JSON viewer to inspect what it saw. Remember from Chapter 1: the leaderboard for this prediction only resolves <strong>six hours later</strong>, when the validator receives the real demand and grades you.</p>
+<div class="note admonition">
+<p class="admonition-title">✅ You closed the full loop</p>
+<p>You exported a training bundle, trained a model of your own design in Colab, saved its weights, shipped them to a cloud VM, and served them to a live decentralized-AI subnet that scores you in public against the world. That is the entire MLOps lifecycle — model, package, deploy, monitor, iterate — on a real system.</p>
+</div>
+</section>
+<section id="where-to-go-next">
+<h2>4.6 Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">#</a></h2>
+<p>You now have everything you need to <strong>compete</strong>: pick smarter features, engineer better lags, try ensembles, tune relentlessly against the <strong>24-hour leaderboard</strong>, and redeploy in minutes. Send the team screenshots when you hit bugs, and share feedback. Be creative, experiment, and have fun — your miner is out there right now, predicting the lights of New England.</p>
+<p><em>Let the games begin.</em> 🏆</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ch4_custom_colab"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch3_models_leaderboard/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 3 — Deploying Models: Linux, Config &amp; the Leaderboard</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-a-training-bundle-from-the-vm">4.1 Export a training bundle from the VM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-your-model-in-colab">4.2 Train your model in Colab</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-the-weights-the-way-the-runtime-expects">4.3 Save the weights the way the runtime expects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ship-it-to-the-miner">4.4 Ship it to the miner</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-your-custom-model-in-production">4.5 Run your custom model in production</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">4.6 Where to go next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dr. Dave Wanik & the BittBridge team · University of Connecticut (OPIM 5509)
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <p style="font-size:0.9em;opacity:0.85"><strong>⚠️ Work in progress.</strong> These are living draft materials — actively being written and revised. Expect rough edges, gaps, and changes; this is a teaching companion, not a final or official reference.</p>
+<p><em>The BittBridge final project (OPIM 5509). Built from the BittBridge team's
+lecture transcripts (Dmitrii Tuzov, Niharika, Faeze, Ben, Matt) and the open-source
+<a href="https://github.com/bittbridge/bittbridge">bittbridge/bittbridge</a> guide —
+a casual-but-rigorous, do-it-yourself walk through decentralized AI on Bittensor Subnet 183.</em></p>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
