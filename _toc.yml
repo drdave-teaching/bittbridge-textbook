@@ -1,0 +1,7 @@
+format: jb-book
+root: intro
+chapters:
+  - file: ch1_decentralized_ai/index
+  - file: ch2_setup_miner/index
+  - file: ch3_models_leaderboard/index
+  - file: ch4_custom_colab/index

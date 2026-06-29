@@ -1,0 +1,28 @@
+title: "Decentralized AI, Hands-On — Building an Energy-Forecasting Miner on Bittensor"
+author: "Dr. Dave Wanik & the BittBridge team · University of Connecticut (OPIM 5509)"
+only_build_toc_files: true
+execute:
+  execute_notebooks: "off"
+html:
+  use_repository_button: true
+  home_page_in_navbar: true
+  extra_footer: |
+    <p><em>The BittBridge final project (OPIM 5509). Built from the BittBridge team's
+    lecture transcripts (Dmitrii Tuzov, Niharika, Faeze, Ben, Matt) and the open-source
+    <a href="https://github.com/bittbridge/bittbridge">bittbridge/bittbridge</a> guide —
+    a casual-but-rigorous, do-it-yourself walk through decentralized AI on Bittensor Subnet 183.</em></p>
+repository:
+  url: https://github.com/drdave-teaching/bittbridge-textbook
+  branch: main
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - dollarmath
+    - colon_fence
+    - deflist
+sphinx:
+  config:
+    html_show_copyright: false
+    mathjax3_config:
+      tex:
+        inlineMath: [['$', '$']]
